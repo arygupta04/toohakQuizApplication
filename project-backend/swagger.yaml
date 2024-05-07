@@ -1,0 +1,2586 @@
+swagger: "2.0"
+info:
+  title: Toohak API
+  description: |
+    API description in for Toohak.
+    All error strings are required to be clear descriptive message. The descriptive message won't change the marks you receive when being automarked as long as you make an attempt for each one to be custom, but they will improve the usability of the frontend.
+  version: 1.0.0
+ 
+schemes:
+  - http
+
+tags:
+  - name: "Iteration 2 (Using Iteration 1)"
+    description: Iteration 2 routes that leverage work done in iteration 1
+  - name: "Iteration 2 (New)"
+    description: Iteration 2 routes that are new
+  - name: "Iteration 3 (Modified)"
+    description: Iteration 3 routes are a modification of iteration 1 and iteration 2 routes
+  - name: "Iteration 3 (New)"
+    description: Iteration 3 routes that are a mix of new routes as well as slightly modified routes from iteration 1 and 2
+
+components:
+  prim:
+    Email:
+      type: string
+      example: hayden.smith@unsw.edu.au
+    Password:
+      type: string
+      example: haydensmith123
+    NameFirst:
+      type: string
+      example: Hayden
+    NameLast:
+      type: string
+      example: Smith
+    Token:
+      type: string
+      example: 23748
+    ResetCode:
+      type: string
+      example: asdf89ajf2348905j9834
+    SessionId:
+      type: integer
+      example: 5546
+    PlayerId:
+      type: integer
+      example: 5546
+    QuestionId:
+      type: integer
+      example: 5546
+    QuestionPosition:
+      type: integer
+      example: 3
+    QuizId:
+      type: integer
+      example: 5546
+    AnswerId:
+      type: integer
+      example: 2384
+    Action:
+      type: string
+      enum: [NEXT_QUESTION, SKIP_COUNTDOWN, GO_TO_ANSWER, GO_TO_FINAL_RESULTS, END]
+    State:
+      type: string
+      enum: [LOBBY, QUESTION_COUNTDOWN, QUESTION_OPEN, QUESTION_CLOSE, ANSWER_SHOW, FINAL_RESULTS, END]
+    Url:
+      type: string
+      example: http://google.com/some/image/path.jpg
+    UrlCsv:
+      type: string
+      example: http://google.com/some/image/path.csv
+    Timestamp:
+      type: integer
+      example: 1683019484
+      description: In seconds. You can find more information that here https://en.wikipedia.org/wiki/Unix_time
+    QuizQuestion:
+      type: string
+      example: Who is the Monarch of England?
+    QuizQuestionDuration:
+      type: integer
+      example: 4
+      description: Duration of question in seconds
+    QuizQuestionPoints:
+      type: integer
+      example: 5
+    QuizQuestionAnswersLite:
+      type: array
+      items:
+        type: object
+        properties:
+          answer:
+            type: string
+            example: Prince Charles
+          correct:
+            type: boolean
+            example: true
+    QuizQuestionAnswers:
+      type: array
+      items:
+        type: object
+        properties:
+          answerId:
+            $ref: '#/components/prim/AnswerId'
+          answer:
+            type: string
+            example: Prince Charles
+          colour:
+            $ref: '#/components/prim/Colour'
+          correct:
+            type: boolean
+            example: true
+      description: 'Note: answers can be return in any order'
+    QuizQuestionAnswersPublic:
+      type: array
+      items:
+        type: object
+        properties:
+          answerId:
+            $ref: '#/components/prim/AnswerId'
+          answer:
+            type: string
+            example: Prince Charles
+          colour:
+            $ref: '#/components/prim/Colour'
+      description: 'Note: answers can be returned in any order'
+    Colour:
+      type: string
+      enum: [red, blue, green, yellow, purple, brown, orange] 
+      description: The colour of a particular question (generated randomly everytime a quiz question is created or updated). Colours only need to be updated on specific routes that clearly state this.
+    Duration:
+      type: integer
+      example: 44
+      description: Sum of all question durations in seconds
+    AtQuestion:
+      type: integer
+      example: 3
+      description: The current question that has been advanced to in the quiz, where 1 is the first question. If the quiz is in either LOBBY, FINAL_RESULTS, or END state then the value is 0.
+    NumQuestions:
+      type: integer
+      example: 1
+      description: The current number of questions in this quiz session
+  group:
+    User:
+      type: object
+      properties:
+        userId:
+          type: integer
+          example: 132
+        name:
+          type: string
+          example: Hayden Smith
+        email:
+          type: string
+          example: hayden.smith@unsw.edu.au
+        numSuccessfulLogins:
+          type: integer
+          example: 5
+        numFailedPasswordsSinceLastLogin:
+          type: integer
+          example: 2
+    SmallQuizzes:
+      type: array
+      items:
+        type: object
+        properties:
+          quizId:
+            $ref: '#/components/prim/QuizId'
+          name:
+            type: string
+            example: My Quiz Name
+
+    QuizIter2:
+      type: object
+      properties:
+        quizId:
+          $ref: '#/components/prim/QuizId'
+        name:
+          type: string
+          example: This is the name of the quiz
+        timeCreated:
+          $ref: '#/components/prim/Timestamp'
+        timeLastEdited:
+          $ref: '#/components/prim/Timestamp'
+        description:
+          type: string
+          example: This quiz is so we can have a lot of fun
+        numQuestions:
+          $ref: '#/components/prim/NumQuestions'
+        questions:
+          type: array
+          items:
+            $ref: '#/components/group/QuizQuestionIter2'
+        duration:
+          $ref: '#/components/prim/Duration'
+
+    QuizIter3:
+      type: object
+      properties:
+        quizId:
+          $ref: '#/components/prim/QuizId'
+        name:
+          type: string
+          example: This is the name of the quiz
+        timeCreated:
+          $ref: '#/components/prim/Timestamp'
+        timeLastEdited:
+          $ref: '#/components/prim/Timestamp'
+        description:
+          type: string
+          example: This quiz is so we can have a lot of fun
+        numQuestions:
+          $ref: '#/components/prim/NumQuestions'
+        questions:
+          type: array
+          items:
+            $ref: '#/components/group/QuizQuestion'
+        duration:
+          $ref: '#/components/prim/Duration'
+        thumbnailUrl:
+          $ref: '#/components/prim/Url'
+
+    QuizQuestion:
+      type: object
+      properties:
+        questionId:
+          $ref: '#/components/prim/QuestionId'
+        question:
+          $ref: '#/components/prim/QuizQuestion'
+        duration:
+          $ref: '#/components/prim/QuizQuestionDuration'
+        thumbnailUrl:
+          $ref: '#/components/prim/Url'
+        points:
+          $ref: '#/components/prim/QuizQuestionPoints'
+        answers:
+          $ref: '#/components/prim/QuizQuestionAnswers'
+    QuizQuestionIter2:
+      type: object
+      properties:
+        questionId:
+          $ref: '#/components/prim/QuestionId'
+        question:
+          $ref: '#/components/prim/QuizQuestion'
+        duration:
+          $ref: '#/components/prim/QuizQuestionDuration'
+        points:
+          $ref: '#/components/prim/QuizQuestionPoints'
+        answers:
+          $ref: '#/components/prim/QuizQuestionAnswers'
+    QuizQuestionPublic:
+      type: object
+      properties:
+        questionId:
+          $ref: '#/components/prim/QuestionId'
+        question:
+          $ref: '#/components/prim/QuizQuestion'
+        duration:
+          $ref: '#/components/prim/QuizQuestionDuration'
+        thumbnailUrl:
+          $ref: '#/components/prim/Url'
+        points:
+          $ref: '#/components/prim/QuizQuestionPoints'
+        answers:
+          $ref: '#/components/prim/QuizQuestionAnswersPublic'
+    QuestionMutateIter2: # Does not have thumbnail URL
+      type: object
+      properties:
+        question:
+          $ref: '#/components/prim/QuizQuestion'
+        duration:
+          $ref: '#/components/prim/QuizQuestionDuration'
+        points:
+          $ref: '#/components/prim/QuizQuestionPoints'
+        answers:
+          $ref: '#/components/prim/QuizQuestionAnswersLite'
+    QuestionMutateIter3: # Has thumbnail URL
+      type: object
+      properties:
+        question:
+          $ref: '#/components/prim/QuizQuestion'
+        duration:
+          $ref: '#/components/prim/QuizQuestionDuration'
+        points:
+          $ref: '#/components/prim/QuizQuestionPoints'
+        answers:
+          $ref: '#/components/prim/QuizQuestionAnswersLite'
+        thumbnailUrl:
+          $ref: '#/components/prim/Url'
+
+    MessagePayload:
+      type: object
+      properties:
+        messageBody:
+          type: string
+          example: Hello everyone! Nice to chat.
+    Message:
+      type: object
+      properties:
+        messageBody:
+          type: string
+          example: This is a message body
+        playerId:
+          $ref: '#/components/prim/PlayerId'
+        playerName:
+          type: string
+          example: Yuchao Jiang
+        timeSent:
+          $ref: '#/components/prim/Timestamp'
+    QuestionResults:
+      type: object
+      properties:
+        questionId:
+          $ref: '#/components/prim/QuestionId'
+        playersCorrectList:
+          type: array
+          items:
+            type: string
+            example: Hayden
+            description: List of the name of players
+          description: This array is ordered in ascending order of player name
+        averageAnswerTime:
+          type: integer
+          example: 45
+          description: The average answer time for the question across all players who attempted the question, rounded to the nearest second. If no answers are submitted then the value is 0.
+        percentCorrect:
+          type: integer
+          example: 54
+          description: A percentage rounded to the nearest whole number that describes the percentage of players that got the question completely correct.
+
+    ResultsFinal:
+      type: object
+      properties:
+        usersRankedByScore:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                example: Hayden
+                description: The name of the player that is a top ranker
+              score:
+                type: number
+                example: 45
+                description: The final score for the user
+          description: A list of all users who played ranked in descending order by score
+        questionResults:
+          type: array
+          items:
+            $ref: '#/components/group/QuestionResults'
+
+  path:
+    PlayerId:
+      in: path
+      name: playerid
+      required: true
+      schema:
+        $ref: '#/components/prim/PlayerId'
+    QuestionId:
+      in: path
+      name: questionid
+      required: true
+      schema:
+        $ref: '#/components/prim/QuestionId'
+    QuestionPosition:
+      in: path
+      name: questionposition
+      required: true
+      schema:
+        $ref: '#/components/prim/QuestionPosition'
+    QuizId:
+      in: path
+      name: quizid
+      required: true
+      schema:
+        $ref: '#/components/prim/QuizId'
+    SessionId:
+      in: path
+      name: sessionid
+      required: true
+      schema:
+        $ref: '#/components/prim/SessionId'
+  header:
+    Token:
+      in: header
+      name: token
+      required: true
+      schema:
+        type: string
+  query:
+    Token:
+      in: query
+      name: token
+      required: true
+      schema:
+        type: string
+    QuizTrashEmpty:
+      in: query
+      name: quizIds
+      required: true
+      description: A string representing a JSONified array of quiz id numbers
+      schema:
+        type: string
+        example: "[3,4,5,6,7]"
+  body:
+    Token:
+      in: body
+      name: body
+      required: true
+      schema:
+        type: object
+        properties:
+          token:
+            $ref: '#/components/prim/Token'
+    Register:
+      in: body
+      name: body
+      required: true
+      schema:
+        type: object
+        properties:
+          email:
+            $ref: '#/components/prim/Email'
+          password:
+            $ref: '#/components/prim/Password'
+          nameFirst:
+            $ref: '#/components/prim/NameFirst'
+          nameLast:
+            $ref: '#/components/prim/NameLast'
+    Login:
+      in: body
+      name: body
+      required: true
+      schema:
+        type: object
+        properties:
+          email:
+            $ref: '#/components/prim/Email'
+          password:
+            $ref: '#/components/prim/Password'
+    LogoutIter2:
+      in: body
+      name: body
+      required: true
+      schema:
+        type: object
+        properties:
+          token:
+            $ref: '#/components/prim/Token'
+    PasswordResetRequest:
+      in: body
+      name: body
+      required: true
+      schema:
+        type: object
+        properties:
+          email:
+            $ref: '#/components/prim/Email'
+    PasswordResetReset:
+      in: body
+      name: body
+      required: true
+      schema:
+        type: object
+        properties:
+          resetCode:
+            $ref: '#/components/prim/ResetCode'
+          password:
+            $ref: '#/components/prim/Password'
+    UserDetailsGetIter2:
+      in: query
+      name: token
+      required: true
+      schema:
+        type: string
+    UserPasswordIter2:
+      in: body
+      name: body
+      required: true
+      schema:
+        type: object
+        properties:
+          token:
+            $ref: '#/components/prim/Token'
+          oldPassword:
+            $ref: '#/components/prim/Password'
+          newPassword:
+            $ref: '#/components/prim/Password'
+    UserPasswordIter3:
+      in: body
+      name: body
+      required: true
+      schema:
+        type: object
+        properties:
+          oldPassword:
+            $ref: '#/components/prim/Password'
+          newPassword:
+            $ref: '#/components/prim/Password'
+    UserDetailsPutIter2:
+      in: body
+      name: body
+      required: true
+      schema:
+        type: object
+        properties:
+          token:
+            $ref: '#/components/prim/Token'
+          email:
+            $ref: '#/components/prim/Email'
+          nameFirst:
+            $ref: '#/components/prim/NameFirst'
+          nameLast:
+            $ref: '#/components/prim/NameLast'
+    UserDetailsPutIter3:
+      in: body
+      name: body
+      required: true
+      schema:
+        type: object
+        properties:
+          email:
+            $ref: '#/components/prim/Email'
+          nameFirst:
+            $ref: '#/components/prim/NameFirst'
+          nameLast:
+            $ref: '#/components/prim/NameLast'
+    QuizList:
+      in: body
+      name: body
+      required: true
+      schema:
+        type: object
+        properties:
+          token:
+            $ref: '#/components/prim/Token'
+    QuizNewIter2:
+      in: body
+      name: body
+      required: true
+      schema:
+        type: object
+        properties:
+          token:
+            $ref: '#/components/prim/Token'
+          name:
+            type: string
+            example: My Quiz Name
+          description:
+            type: string
+            example: A description of my quiz
+    QuizNewIter3:
+      in: body
+      name: body
+      required: true
+      schema:
+        type: object
+        properties:
+          name:
+            type: string
+            example: My Quiz Name
+          description:
+            type: string
+            example: A description of my quiz
+    QuizDeleteIter2:
+      in: query
+      name: token
+      required: true
+      schema:
+        token:
+          $ref: '#/components/prim/Token'
+    QuizGetIter2:
+      in: query
+      name: token
+      required: true
+      schema:
+        token:
+          $ref: '#/components/prim/Token'
+    QuizUpdateNameIter2:
+      in: body
+      name: body
+      required: true
+      schema:
+        type: object
+        properties:
+          token:
+            $ref: '#/components/prim/Token'
+          name:
+            type: string
+            example: My Quiz Name
+    QuizUpdateNameIter3:
+      in: body
+      name: body
+      required: true
+      schema:
+        type: object
+        properties:
+          name:
+            type: string
+            example: My Quiz Name
+    QuizUpdateDescriptionIter2:
+      in: body
+      name: body
+      required: true
+      schema:
+        type: object
+        properties:
+          token:
+            $ref: '#/components/prim/Token'
+          description:
+            type: string
+            example: A description of my quiz
+    QuizUpdateDescriptionIter3:
+      in: body
+      name: body
+      required: true
+      schema:
+        type: object
+        properties:
+          description:
+            type: string
+            example: A description of my quiz
+    QuizTrash:
+      in: query
+      name: token
+      required: true
+      schema:
+        token:
+          $ref: '#/components/prim/Token'
+    QuizRestore:
+      in: body
+      name: body
+      required: true
+      schema:
+        type: object
+        properties:
+          token:
+            $ref: '#/components/prim/Token'
+    QuizThumbnail:
+      in: body
+      name: body
+      required: true
+      schema:
+        type: object
+        properties:
+          imgUrl:
+            $ref: '#/components/prim/Url'
+    QuizTransferIter2:
+      in: body
+      name: body
+      required: true
+      schema:
+        type: object
+        properties:
+          token:
+            $ref: '#/components/prim/Token'
+          userEmail:
+            $ref: '#/components/prim/Email'
+    QuizTransferIter3:
+      in: body
+      name: body
+      required: true
+      schema:
+        type: object
+        properties:
+          userEmail:
+            $ref: '#/components/prim/Email'
+    QuizQuestionMutateIter2:
+      in: body
+      name: body
+      required: true
+      schema:
+        type: object
+        properties:
+          token:
+            $ref: '#/components/prim/Token'
+          questionBody:
+            $ref: '#/components/group/QuestionMutateIter2'
+    QuizQuestionMutateIter3:
+      in: body
+      name: body
+      required: true
+      schema:
+        type: object
+        properties:
+          questionBody:
+            $ref: '#/components/group/QuestionMutateIter3'
+    QuizQuestionDelete:
+      in: body
+      name: body
+      required: true
+      schema:
+        type: object
+        properties:
+          token:
+            $ref: '#/components/prim/Token'
+    QuizQuestionMoveIter2:
+      in: body
+      name: body
+      required: true
+      schema:
+        type: object
+        properties:
+          token:
+            $ref: '#/components/prim/Token'
+          newPosition:
+            type: integer
+            example: 1
+            description: Position 0 is the very beginning, position 1 is between the 1st and 2nd question, etc. So position n-1 is the final position where n is the number of questions
+    QuizQuestionMoveIter3:
+      in: body
+      name: body
+      required: true
+      schema:
+        type: object
+        properties:
+          newPosition:
+            type: integer
+            example: 1
+            description: Position 0 is the very beginning, position 1 is between the 1st and 2nd question, etc. So position n-1 is the final position where n is the number of questions
+    QuizSessionStartIter3:
+      in: body
+      name: body
+      required: true
+      schema:
+        type: object
+        properties:
+          autoStartNum:
+            type: integer 
+            example: 3
+            description: autostartNum is number of people to autostart the quiz once that number of people join. If this number is 0, then no auto start will occur.
+    QuizSessionMutateIter3:
+      in: body
+      name: body
+      required: true
+      schema:
+        type: object
+        properties:
+          action:
+            $ref: '#/components/prim/Action'
+    QuizSessionStatus:
+      in: query
+      name: token
+      required: true
+      schema:
+        token:
+          $ref: '#/components/prim/Token'
+    PlayerJoin:
+      in: body
+      name: body
+      required: true
+      schema:
+        type: object
+        properties:
+          sessionId:
+            type: integer
+            example: 234234
+          name:
+            type: string
+            example: Hayden Smith
+    PlayerQuestionAnswer:
+      in: body
+      name: body
+      required: true
+      schema:
+        type: object
+        properties:
+          answerIds:
+            type: array
+            items:
+              $ref: '#/components/prim/AnswerId'
+    PlayerQuestionChat:
+      in: body
+      name: body
+      required: true
+      schema:
+        type: object
+        properties:
+          message:
+            $ref: '#/components/group/MessagePayload'
+
+
+  return:
+    Token:
+      type: object
+      properties:
+        token:
+          $ref: '#/components/prim/Token'
+    Error:
+      properties:
+        error:
+          type: string
+          enum:
+            - error
+    Empty:
+      type: object
+    User:
+      type: object
+      properties:
+        user:
+          $ref: '#/components/group/User'
+    QuizList:
+      type: object
+      properties:
+        quizzes:
+          $ref: '#/components/group/SmallQuizzes'
+    QuizNew:
+      type: object
+      properties:
+        quizId:
+          $ref: '#/components/prim/QuizId'
+    QuizSingleIter2:
+      $ref: '#/components/group/QuizIter2'
+    QuizSingleIter3:
+      $ref: '#/components/group/QuizIter3'
+    QuizTrash:
+      type: object
+      properties:
+        quizzes:
+          $ref: '#/components/group/SmallQuizzes'
+    QuizQuestionNew:
+      type: object
+      properties:
+        questionId:
+          $ref: '#/components/prim/QuestionId'
+    QuizQuestionDuplicate:
+      type: object
+      properties:
+        newQuestionId:
+          $ref: '#/components/prim/QuestionId'
+    QuizSessionStart:
+      type: object
+      properties:
+        sessionId:
+          $ref: '#/components/prim/SessionId'
+    QuizSessionStatus:
+      type: object
+      properties:
+        state:
+          $ref: '#/components/prim/State'
+        atQuestion:
+          $ref: '#/components/prim/AtQuestion'
+        players:
+          type: array
+          items:
+            type: string
+            example: Hayden
+            description: Name of a player
+          description: Names of all the players in the quiz session, ordered in ascending order of player name
+        metadata:
+          $ref: '#/components/group/QuizIter3'
+    QuizSessionsList:
+      type: object
+      properties:
+        activeSessions:
+          type: array
+          description: List of active quiz session ids (sessions that are not in the END state), sorted in ascending order
+          example: [247, 566, 629, 923]
+          items:
+            $ref: '#/components/prim/SessionId'
+        inactiveSessions:
+          type: array
+          description: List of inactive quiz session ids (sessions that are in the END state), sorted in ascending order
+          example: [422, 817]
+          items:
+            $ref: '#/components/prim/SessionId'
+
+    QuizSessionResultsCsv:
+      type: object
+      properties:
+        url:
+          $ref: '#/components/prim/UrlCsv'
+    PlayerJoin:
+      type: object
+      properties: 
+        playerId:
+          $ref: '#/components/prim/PlayerId'          
+    PlayerStatus:
+      type: object
+      properties:
+        state:
+          $ref: '#/components/prim/State'
+        numQuestions:
+          $ref: '#/components/prim/NumQuestions'
+        atQuestion:
+          $ref: '#/components/prim/AtQuestion'
+    ResultsFinal:
+      $ref: '#/components/group/ResultsFinal'
+    PlayerChat:
+      type: object
+      properties: 
+        messages:
+          type: array
+          items:
+            $ref: '#/components/group/Message'
+
+paths:
+
+
+
+  /v1/admin/auth/register:
+    post:
+      summary: Register a new admin user
+      description: Takes in information about a new admin user and registers them in the system. This route is not relevant to guests who want to play a particular quiz, but is used for the creation of accounts of people who manage quizzes.
+      tags:
+        # - "By Topic: Access Management"
+        - "Iteration 2 (Using Iteration 1)"
+      parameters:
+        - $ref: '#/components/body/Register'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/components/return/Token'
+        400:
+          description: |
+            If any of the following are true:
+            - Email address is used by another user
+            - Email does not satisfy this: https://www.npmjs.com/package/validator (validator.isEmail)
+            - NameFirst contains characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophes
+            - NameFirst is less than 2 characters or more than 20 characters
+            - NameLast contains characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophes
+            - NameLast is less than 2 characters or more than 20 characters
+            - Password is less than 8 characters
+            - Password does not contain at least one number and at least one letter
+          schema:
+            $ref: '#/components/return/Error'
+                
+  /v1/admin/auth/login:
+    post:
+      summary: Login an admin user
+      description: Takes in information about an admin user to determine if they can log in to manage quizzes. This route is not relevant to guests who want to play a particular quiz, but is used for the creation of accounts of people who manage quizzes. 
+      tags:
+        # - "By Topic: Access Management"
+        - "Iteration 2 (Using Iteration 1)"
+      parameters:
+        - $ref: '#/components/body/Login'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/components/return/Token'
+        400:
+          description: |
+            If any of the following are true:
+            - Email address does not exist
+            - Password is not correct for the given email
+          schema:
+            $ref: '#/components/return/Error'
+
+  /v1/admin/auth/logout:
+    post:
+      summary: Logs out an admin user who has an active user session.
+      description: Should be called with a token that is returned after either a login or register has been made.
+      tags:
+        # - "By Topic: Access Management"
+        - "Iteration 2 (New)"
+      parameters:
+        - $ref: '#/components/body/LogoutIter2'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/components/return/Empty'
+        401:
+          description: Token is empty or invalid (does not refer to valid logged in user session)
+          schema:
+            $ref: '#/components/return/Error'
+
+  /v2/admin/auth/logout:
+    post:
+      summary: Logs out an admin user who has an active user session.
+      description: Should be called with a token that is returned after either a login or register has been made.
+      tags:
+        # - "By Topic: Access Management"
+        - "Iteration 3 (Modified)"
+      parameters:
+        - $ref: '#/components/header/Token'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/components/return/Empty'
+        401:
+          description: Token is empty or invalid (does not refer to valid logged in user session)
+          schema:
+            $ref: '#/components/return/Error'
+      security:
+        - Iteration 3 Token Authentication: []
+
+#  /v1/admin/auth/passwordreset/request:
+#    post:
+#      summary: Requesting a password reset.
+#      description: When users forget their password and can't log in, they can request a security code to begin the process of resetting their password.
+#      tags:
+#        # - "By Topic: Access Management"
+#        - "Iteration 3 (New)"
+#      parameters:
+#        - $ref: '#/components/body/PasswordResetRequest'
+#      responses:
+#        200:
+#          description: OK
+#          schema:
+#            $ref: '#/components/return/Empty'
+#        400:
+#          description: |
+#            If any of the following are true:
+#            - Email address does not exist
+#            Note: This is not the best from a security standpoint, but it's simple for 1531
+#          schema:
+#            $ref: '#/components/return/Error'
+#  /v1/admin/auth/passwordreset/reset:
+#    post:
+#      summary: Completing a password reset.
+#      description: When users forget their password and get a security code they can complete the password reset.
+#      tags:
+#        # - "By Topic: Access Management"
+#        - "Iteration 3 (New)"
+#      parameters:
+#        - $ref: '#/components/body/PasswordResetReset'
+#      responses:
+#        200:
+#          description: OK
+#          schema:
+#            $ref: '#/components/return/Empty'
+#        400:
+#          description: |
+#            If any of the following are true:
+#            - Reset code is not valid
+#            - New Password is less than 8 characters
+#            - New Password does not contain at least one number and at least one letter
+#            - Password has already been used by this user before
+#          schema:
+#            $ref: '#/components/return/Error'
+  /v1/admin/user/details:
+    get:
+      summary: Get the details of an admin user.
+      description: For the given admin user that is logged in, return all of the relevant details.
+      tags:
+        # - "By Topic: Access Management"
+        - "Iteration 2 (Using Iteration 1)"
+      parameters:
+        - $ref: '#/components/body/UserDetailsGetIter2'
+      responses:
+        200:
+          description: |
+            - "name" is the first and last name concatenated with a single space between them
+            - numSuccessfulLogins includes logins direct via registration, and is counted from the moment of registration starting at 1
+            - numFailedPasswordsSinceLastLogin is reset every time they have a successful login, and simply counts the number of attempted logins that failed due to incorrect password, only since the last login
+          schema:
+            $ref: '#/components/return/User'
+        401:
+          description: Token is empty or invalid (does not refer to valid logged in user session)
+          schema:
+            $ref: '#/components/return/Error'
+    put:
+      summary: Update the details of an admin user (non-password).
+      description: Given a set of properties, update those properties of this logged in admin user.
+      tags:
+        # - "By Topic: Access Management"
+        - "Iteration 2 (Using Iteration 1)"
+      parameters:
+        - $ref: '#/components/body/UserDetailsPutIter2'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/components/return/Empty'
+        401:
+          description: Token is empty or invalid (does not refer to valid logged in user session)
+          schema:
+            $ref: '#/components/return/Error'
+        400:
+          description: |
+            If any of the following are true:
+            - Email is currently used by another user (excluding the current authorised user)
+            - Email does not satisfy this: https://www.npmjs.com/package/validator (validator.isEmail)
+            - NameFirst contains characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophes
+            - NameFirst is less than 2 characters or more than 20 characters
+            - NameLast contains characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophes
+            - NameLast is less than 2 characters or more than 20 characters
+          schema:
+            $ref: '#/components/return/Error'
+  /v2/admin/user/details:
+    get:
+      summary: Get the details of this admin user (non-password).
+      description: For the given admin user that is logged in, return all of the relevant details.
+      tags:
+        # - "By Topic: Access Management"
+        - "Iteration 3 (Modified)"
+      parameters:
+        - $ref: '#/components/header/Token'
+      responses:
+        200:
+          description: |
+            - "name" is the first and last name concatenated with a single space between them
+            - numSuccessfulLogins includes logins direct via registration, and is counted from the moment of registration starting at 1
+            - numFailedPasswordsSinceLastLogin is reset every time they have a successful login, and simply counts the number of attempted logins that failed due to incorrect password, only since the last login
+          schema:
+            $ref: '#/components/return/User'
+        401:
+          description: Token is empty or invalid (does not refer to valid logged in user session)
+          schema:
+            $ref: '#/components/return/Error'
+      security:
+        - Iteration 3 Token Authentication: []
+    put:
+      summary: Update the details of this admin user (non-password).
+      description: Given a set of properties, update those properties of this logged in admin user.
+      tags:
+        # - "By Topic: Access Management"
+        - "Iteration 3 (Modified)"
+      parameters:
+        - $ref: '#/components/header/Token'
+        - $ref: '#/components/body/UserDetailsPutIter3'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/components/return/Empty'
+        401:
+          description: Token is empty or invalid (does not refer to valid logged in user session)
+          schema:
+            $ref: '#/components/return/Error'
+        400:
+          description: |
+            If any of the following are true:
+            - Email is currently used by another user (excluding the current authorised user)
+            - Email does not satisfy this: https://www.npmjs.com/package/validator (validator.isEmail)
+            - NameFirst contains characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophes
+            - NameFirst is less than 2 characters or more than 20 characters
+            - NameLast contains characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophes
+            - NameLast is less than 2 characters or more than 20 characters
+          schema:
+            $ref: '#/components/return/Error'
+      security:
+        - Iteration 3 Token Authentication: []
+  /v1/admin/user/password:
+    put:
+      summary: Update the password of this admin user.
+      description: Given details relating to a password change, update the password of a logged in user.
+      tags:
+        # - "By Topic: Access Management"
+        - "Iteration 2 (Using Iteration 1)"
+      parameters:
+        - $ref: '#/components/body/UserPasswordIter2'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/components/return/Empty'
+        401:
+          description: Token is empty or invalid (does not refer to valid logged in user session)
+          schema:
+            $ref: '#/components/return/Error'
+        400:
+          description: |
+            If any of the following are true:
+            - Old Password is not the correct old password
+            - Old Password and New Password match exactly
+            - New Password has already been used before by this user
+            - New Password is less than 8 characters
+            - New Password does not contain at least one number and at least one letter
+          schema:
+            $ref: '#/components/return/Error'
+  /v2/admin/user/password:
+    put:
+      summary: Update the password of this admin user.
+      description: Given details relating to a password change, update the password of a logged in user.
+      tags:
+        # - "By Topic: Access Management"
+        - "Iteration 3 (Modified)"
+      parameters:
+        - $ref: '#/components/header/Token'
+        - $ref: '#/components/body/UserPasswordIter3'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/components/return/Empty'
+        401:
+          description: Token is empty or invalid (does not refer to valid logged in user session)
+          schema:
+            $ref: '#/components/return/Error'
+        400:
+          description: |
+            If any of the following are true:
+            - Old Password is not the correct old password
+            - Old Password and New Password match exactly
+            - New Password has already been used before by this user
+            - New Password is less than 8 characters
+            - New Password does not contain at least one number and at least one letter
+          schema:
+            $ref: '#/components/return/Error'
+      security:
+        - Iteration 3 Token Authentication: []
+        
+
+
+
+
+
+
+
+
+
+
+  /v1/admin/quiz/list:
+    get:
+      summary: Lists all user's quizzes
+      description: Provide a list of all quizzes that are owned by the currently logged in user
+      tags:
+        # - "By Topic: Quiz Management"
+        - "Iteration 2 (Using Iteration 1)"
+      parameters:
+        - $ref: '#/components/query/Token'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/components/return/QuizList'
+        401:
+          description: Token is empty or invalid (does not refer to valid logged in user session)
+          schema:
+            $ref: '#/components/return/Error'
+  /v2/admin/quiz/list:
+    get:
+      summary: Lists all user's quizzes
+      description: Provide a list of all quizzes that are owned by the currently logged in user
+      tags:
+        # - "By Topic: Quiz Management"
+        - "Iteration 3 (Modified)"
+      parameters:
+        - $ref: '#/components/header/Token'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/components/return/QuizList'
+        401:
+          description: Token is empty or invalid (does not refer to valid logged in user session)
+          schema:
+            $ref: '#/components/return/Error'
+      security:
+        - Iteration 3 Token Authentication: []
+  /v1/admin/quiz:
+    post:
+      summary: Create a new quiz
+      description: Given basic details about a new quiz, create one for the logged in user
+      tags:
+        # - "By Topic: Quiz Management"
+        - "Iteration 2 (Using Iteration 1)"
+      parameters:
+        - $ref: '#/components/body/QuizNewIter2'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/components/return/QuizNew'
+        401:
+          description: Token is empty or invalid (does not refer to valid logged in user session)
+          schema:
+            $ref: '#/components/return/Error'
+        400:
+          description: |
+            If any of the following are true:
+            - Name contains invalid characters. Valid characters are alphanumeric and spaces
+            - Name is either less than 3 characters long or more than 30 characters long
+            - Name is already used by the current logged in user for another quiz
+            - Description is more than 100 characters in length (note: empty strings are OK)
+          schema:
+            $ref: '#/components/return/Error'
+  /v2/admin/quiz:
+    post:
+      summary: Create a new quiz
+      description: Given basic details about a new quiz, create one for the logged in user
+      tags:
+        # - "By Topic: Quiz Management"
+        - "Iteration 3 (Modified)"
+      parameters:
+        - $ref: '#/components/header/Token'
+        - $ref: '#/components/body/QuizNewIter3'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/components/return/QuizNew'
+        401:
+          description: Token is empty or invalid (does not refer to valid logged in user session)
+          schema:
+            $ref: '#/components/return/Error'
+        400:
+          description: |
+            If any of the following are true:
+            - Name contains invalid characters. Valid characters are alphanumeric and spaces
+            - Name is either less than 3 characters long or more than 30 characters long
+            - Name is already used by the current logged in user for another quiz
+            - Description is more than 100 characters in length (note: empty strings are OK)
+          schema:
+            $ref: '#/components/return/Error'
+      security:
+        - Iteration 3 Token Authentication: []
+  /v1/admin/quiz/{quizid}:
+    delete:
+      summary: Send a quiz to trash
+      description: |
+       - Given a particular quiz, send it to the trash (can be recovered later)
+       - When this route is called, the timeLastEdited is updated
+      tags:
+        # - "By Topic: Quiz Management"
+        - "Iteration 2 (Using Iteration 1)"
+      parameters:
+        - $ref: '#/components/path/QuizId'
+        - $ref: '#/components/body/QuizDeleteIter2'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/components/return/Empty'
+        401:
+          description: Token is empty or invalid (does not refer to valid logged in user session)
+          schema:
+            $ref: '#/components/return/Error'
+        403:
+          description: Valid token is provided, but user is not an owner of this quiz
+          schema:
+            $ref: '#/components/return/Error'
+    get:
+      summary: Get info about current quiz
+      description: Get all of the relevant information about the current quiz including questions
+      tags:
+        # - "By Topic: Quiz Management"
+        - "Iteration 2 (Using Iteration 1)"
+      parameters:
+        - $ref: '#/components/path/QuizId'
+        - $ref: '#/components/body/QuizGetIter2'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/components/return/QuizSingleIter2'
+        401:
+          description: Token is empty or invalid (does not refer to valid logged in user session)
+          schema:
+            $ref: '#/components/return/Error'
+        403:
+          description: Valid token is provided, but user is not an owner of this quiz
+          schema:
+            $ref: '#/components/return/Error'
+  /v2/admin/quiz/{quizid}:
+    delete:
+      summary: Send a quiz to trash
+      description: |
+       - Given a particular quiz, send it to the trash (can be recovered later)
+       - When this route is called, the timeLastEdited is updated
+      tags:
+        # - "By Topic: Quiz Management"
+        - "Iteration 3 (Modified)"
+      parameters:
+        - $ref: '#/components/path/QuizId'
+        - $ref: '#/components/header/Token'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/components/return/Empty'
+        401:
+          description: Token is empty or invalid (does not refer to valid logged in user session)
+          schema:
+            $ref: '#/components/return/Error'
+        403:
+          description: Valid token is provided, but user is not an owner of this quiz
+          schema:
+            $ref: '#/components/return/Error'
+        400:
+          description: |
+            If any of the following are true:
+            - Any session for this quiz is not in END state
+          schema:
+            $ref: '#/components/return/Error'
+      security:
+        - Iteration 3 Token Authentication: []
+    get:
+      summary: Get info about current quiz
+      description: Get all of the relevant information about the current quiz including questions
+      tags:
+        # - "By Topic: Quiz Management"
+        - "Iteration 3 (Modified)"
+      parameters:
+        - $ref: '#/components/path/QuizId'
+        - $ref: '#/components/header/Token'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/components/return/QuizSingleIter3'
+        401:
+          description: Token is empty or invalid (does not refer to valid logged in user session)
+          schema:
+            $ref: '#/components/return/Error'
+        403:
+          description: Valid token is provided, but user is not an owner of this quiz
+          schema:
+            $ref: '#/components/return/Error'
+      security:
+        - Iteration 3 Token Authentication: []
+  /v1/admin/quiz/{quizid}/name:
+    put:
+      summary: Update quiz name
+      description: Update the name of the relevant quiz
+      tags:
+        # - "By Topic: Quiz Management"
+        - "Iteration 2 (Using Iteration 1)"
+      parameters:
+        - $ref: '#/components/path/QuizId'
+        - $ref: '#/components/body/QuizUpdateNameIter2'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/components/return/Empty'
+        401:
+          description: Token is empty or invalid (does not refer to valid logged in user session)
+          schema:
+            $ref: '#/components/return/Error'
+        403:
+          description: Valid token is provided, but user is not an owner of this quiz
+          schema:
+            $ref: '#/components/return/Error'
+        400:
+          description: |
+            If any of the following are true:
+            - Name contains invalid characters. Valid characters are alphanumeric and spaces
+            - Name is either less than 3 characters long or more than 30 characters long
+            - Name is already used by the current logged in user for another quiz
+          schema:
+            $ref: '#/components/return/Error'
+  /v2/admin/quiz/{quizid}/name:
+    put:
+      summary: Update quiz name
+      description: Update the name of the relevant quiz
+      tags:
+        # - "By Topic: Quiz Management"
+        - "Iteration 3 (Modified)"
+      parameters:
+        - $ref: '#/components/path/QuizId'
+        - $ref: '#/components/header/Token'
+        - $ref: '#/components/body/QuizUpdateNameIter3'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/components/return/Empty'
+        401:
+          description: Token is empty or invalid (does not refer to valid logged in user session)
+          schema:
+            $ref: '#/components/return/Error'
+        403:
+          description: Valid token is provided, but user is not an owner of this quiz
+          schema:
+            $ref: '#/components/return/Error'
+        400:
+          description: |
+            If any of the following are true:
+            - Name contains invalid characters. Valid characters are alphanumeric and spaces
+            - Name is either less than 3 characters long or more than 30 characters long
+            - Name is already used by the current logged in user for another quiz
+          schema:
+            $ref: '#/components/return/Error'
+      security:
+        - Iteration 3 Token Authentication: []
+  /v1/admin/quiz/{quizid}/description:
+    put:
+      summary: Update quiz description
+      description: Update the description of the relevant quiz
+      tags:
+        # - "By Topic: Quiz Management"
+        - "Iteration 2 (Using Iteration 1)"
+      parameters:
+        - $ref: '#/components/path/QuizId'
+        - $ref: '#/components/body/QuizUpdateDescriptionIter2'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/components/return/Empty'
+        401:
+          description: Token is empty or invalid (does not refer to valid logged in user session)
+          schema:
+            $ref: '#/components/return/Error'
+        403:
+          description: Valid token is provided, but user is not an owner of this quiz
+          schema:
+            $ref: '#/components/return/Error'
+        400:
+          description: |
+            If any of the following are true:
+            - Description is more than 100 characters in length (note: empty strings are OK)
+          schema:
+            $ref: '#/components/return/Error'
+  /v2/admin/quiz/{quizid}/description:
+    put:
+      summary: Update quiz description
+      description: Update the description of the relevant quiz
+      tags:
+        # - "By Topic: Quiz Management"
+        - "Iteration 3 (Modified)"
+      parameters:
+        - $ref: '#/components/header/Token'
+        - $ref: '#/components/path/QuizId'
+        - $ref: '#/components/body/QuizUpdateDescriptionIter3'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/components/return/Empty'
+        401:
+          description: Token is empty or invalid (does not refer to valid logged in user session)
+          schema:
+            $ref: '#/components/return/Error'
+        403:
+          description: Valid token is provided, but user is not an owner of this quiz
+          schema:
+            $ref: '#/components/return/Error'
+        400:
+          description: |
+            If any of the following are true:
+            - Description is more than 100 characters in length (note: empty strings are OK)
+          schema:
+            $ref: '#/components/return/Error'
+      security:
+        - Iteration 3 Token Authentication: []
+  /v1/admin/quiz/trash:
+    get:
+      summary: View the quizzes in trash
+      description: View the quizzes that are currently in the trash for the logged in user
+      tags:
+        # - "By Topic: Quiz Management"
+        - "Iteration 2 (New)"
+      parameters:
+        - $ref: '#/components/body/QuizTrash'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/components/return/QuizTrash'
+        401:
+          description: Token is empty or invalid (does not refer to valid logged in user session)
+          schema:
+            $ref: '#/components/return/Error'
+  /v2/admin/quiz/trash:
+    get:
+      summary: View the quizzes in trash
+      description: View the quizzes that are currently in the trash for the logged in user
+      tags:
+        # - "By Topic: Quiz Management"
+        - "Iteration 3 (Modified)"
+      parameters:
+        - $ref: '#/components/header/Token'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/components/return/QuizTrash'
+        401:
+          description: Token is empty or invalid (does not refer to valid logged in user session)
+          schema:
+            $ref: '#/components/return/Error'
+      security:
+        - Iteration 3 Token Authentication: []
+  /v1/admin/quiz/{quizid}/restore:
+    post:
+      summary: Restore a quiz from trash
+      description: Restore a particular quiz from the trash back to an active quiz. Note -- This should update it's timeLastEdited timestamp.
+      tags:
+        # - "By Topic: Quiz Management"
+        - "Iteration 2 (New)"
+      parameters:
+        - $ref: '#/components/path/QuizId'
+        - $ref: '#/components/body/QuizRestore'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/components/return/Empty'
+        401:
+          description: Token is empty or invalid (does not refer to valid logged in user session)
+          schema:
+            $ref: '#/components/return/Error'
+        403:
+          description: Valid token is provided, but user is not an owner of this quiz
+          schema:
+            $ref: '#/components/return/Error'
+        400:
+          description: |
+            If any of the following are true:
+            - Quiz name of the restored quiz is already used by another active quiz
+            - Quiz ID refers to a quiz that is not currently in the trash
+          schema:
+            $ref: '#/components/return/Error'
+  /v2/admin/quiz/{quizid}/restore:
+    post:
+      summary: Restore a quiz from trash
+      description: Restore a particular quiz from the trash back to an active quiz. Note -- This should update it's timeLastEdited timestamp.
+      tags:
+        # - "By Topic: Quiz Management"
+        - "Iteration 3 (Modified)"
+      parameters:
+        - $ref: '#/components/path/QuizId'
+        - $ref: '#/components/header/Token'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/components/return/Empty'
+        401:
+          description: Token is empty or invalid (does not refer to valid logged in user session)
+          schema:
+            $ref: '#/components/return/Error'
+        403:
+          description: Valid token is provided, but user is not an owner of this quiz
+          schema:
+            $ref: '#/components/return/Error'
+        400:
+          description: |
+            If any of the following are true:
+            - Quiz name of the restored quiz is already used by another active quiz
+            - Quiz ID refers to a quiz that is not currently in the trash
+          schema:
+            $ref: '#/components/return/Error'
+      security:
+        - Iteration 3 Token Authentication: []
+  /v1/admin/quiz/trash/empty:
+    delete:
+      summary: Empty the trash
+      description: Permanently delete specific quizzes currently sitting in the trash
+      tags:
+        # - "By Topic: Quiz Management"
+        - "Iteration 2 (New)"
+      parameters:
+        - $ref: '#/components/query/Token'
+        - $ref: '#/components/query/QuizTrashEmpty'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/components/return/Empty'
+        401:
+          description: Token is empty or invalid (does not refer to valid logged in user session)
+          schema:
+            $ref: '#/components/return/Error'
+        403:
+          description: Valid token is provided, but one or more of the Quiz IDs refers to a quiz that this current user does not own
+          schema:
+            $ref: '#/components/return/Error'
+        400:
+          description: |
+            If any of the following are true:
+            - One or more of the Quiz IDs is not currently in the trash
+          schema:
+            $ref: '#/components/return/Error'
+  /v2/admin/quiz/trash/empty:
+    delete:
+      summary: Empty the trash
+      description: Permanently delete specific quizzes currently sitting in the trash
+      tags:
+        # - "By Topic: Quiz Management"
+        - "Iteration 3 (Modified)"
+      parameters:
+        - $ref: '#/components/header/Token'
+        - $ref: '#/components/query/QuizTrashEmpty'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/components/return/Empty'
+        401:
+          description: Token is empty or invalid (does not refer to valid logged in user session)
+          schema:
+            $ref: '#/components/return/Error'
+        403:
+          description: Valid token is provided, but one or more of the Quiz IDs refers to a quiz that this current user does not own
+          schema:
+            $ref: '#/components/return/Error'
+        400:
+          description: |
+            If any of the following are true:
+            - One or more of the Quiz IDs is not currently in the trash
+          schema:
+            $ref: '#/components/return/Error'
+      security:
+        - Iteration 3 Token Authentication: []
+  /v1/admin/quiz/{quizid}/thumbnail:
+    put:
+      summary: Update the quiz thumbnail
+      description: |
+        Update the thumbnail for the quiz.
+        When this route is called, the timeLastEdited is updated.
+      tags:
+        # - "By Topic: Quiz Management"
+        - "Iteration 3 (New)"
+      parameters:
+        - $ref: '#/components/path/QuizId'
+        - $ref: '#/components/header/Token'
+        - $ref: '#/components/body/QuizThumbnail'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/components/return/Empty'
+        401:
+          description: Token is empty or invalid (does not refer to valid logged in user session)
+          schema:
+            $ref: '#/components/return/Error'
+        403:
+          description: Valid token is provided, but user is not an owner of this quiz
+          schema:
+            $ref: '#/components/return/Error'
+        400:
+          description: |
+            If any of the following are true:
+            - The imgUrl does not end with one of the following filetypes (case insensitive): jpg, jpeg, png
+            - The imgUrl does not begin with 'http://' or 'https://'
+          schema:
+            $ref: '#/components/return/Error'
+      security:
+        - Iteration 3 Token Authentication: []
+  /v1/admin/quiz/{quizid}/transfer:
+    post:
+      summary: Transfer the quiz to another owner
+      description: Transfer ownership of a quiz to a different user based on their email
+      tags:
+        # - "By Topic: Quiz Management"
+        - "Iteration 2 (New)"
+      parameters:
+        - $ref: '#/components/path/QuizId'
+        - $ref: '#/components/body/QuizTransferIter2'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/components/return/Empty'
+        401:
+          description: Token is empty or invalid (does not refer to valid logged in user session)
+          schema:
+            $ref: '#/components/return/Error'
+        403:
+          description: Valid token is provided, but user is not an owner of this quiz
+          schema:
+            $ref: '#/components/return/Error'
+        400:
+          description: |
+            If any of the following are true:
+            - userEmail is not a real user
+            - userEmail is the current logged in user
+            - Quiz ID refers to a quiz that has a name that is already used by the target user
+          schema:
+            $ref: '#/components/return/Error'
+  /v2/admin/quiz/{quizid}/transfer:
+    post:
+      summary: Transfer the quiz to another owner
+      description: Transfer ownership of a quiz to a different user based on their email
+      tags:
+        # - "By Topic: Quiz Management"
+        - "Iteration 3 (Modified)"
+      parameters:
+        - $ref: '#/components/path/QuizId'
+        - $ref: '#/components/header/Token'
+        - $ref: '#/components/body/QuizTransferIter3'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/components/return/Empty'
+        401:
+          description: Token is empty or invalid (does not refer to valid logged in user session)
+          schema:
+            $ref: '#/components/return/Error'
+        403:
+          description: Valid token is provided, but user is not an owner of this quiz
+          schema:
+            $ref: '#/components/return/Error'
+        400:
+          description: |
+            If any of the following are true:
+            - userEmail is not a real user
+            - userEmail is the current logged in user
+            - Quiz ID refers to a quiz that has a name that is already used by the target user
+            - Any session for this quiz is not in END state
+          schema:
+            $ref: '#/components/return/Error'
+      security:
+        - Iteration 3 Token Authentication: []
+  /v1/admin/quiz/{quizid}/question:
+    post:
+      summary: Create quiz question
+      description: |
+        Create a new stub question for a particular quiz.
+        When this route is called, and a question is created, the timeLastEdited is set as the same as the created time, and the colours of all answers of that question are randomly generated.
+      tags:
+        # - "By Topic: Quiz Management"
+        - "Iteration 2 (New)"
+      parameters:
+        - $ref: '#/components/path/QuizId'
+        - $ref: '#/components/body/QuizQuestionMutateIter2'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/components/return/QuizQuestionNew'
+        401:
+          description: Token is empty or invalid (does not refer to valid logged in user session)
+          schema:
+            $ref: '#/components/return/Error'
+        403:
+          description: Valid token is provided, but user is not an owner of this quiz
+          schema:
+            $ref: '#/components/return/Error'
+        400:
+          description: |
+            If any of the following are true:
+            - Question string is less than 5 characters in length or greater than 50 characters in length
+            - The question has more than 6 answers or less than 2 answers
+            - The question duration is not a positive number
+            - The sum of the question durations in the quiz exceeds 3 minutes
+            - The points awarded for the question are less than 1 or greater than 10
+            - The length of any answer is shorter than 1 character long, or longer than 30 characters long
+            - Any answer strings are duplicates of one another (within the same question)
+            - There are no correct answers
+          schema:
+            $ref: '#/components/return/Error'
+  /v2/admin/quiz/{quizid}/question:
+    post:
+      summary: Create quiz question
+      description: |
+        Create a new stub question for a particular quiz.
+        When this route is called, and a question is created, the timeLastEdited is set as the same as the created time, and the colours of all answers of that question are randomly generated.
+      tags:
+        # - "By Topic: Quiz Management"
+        - "Iteration 3 (Modified)"
+      parameters:
+        - $ref: '#/components/path/QuizId'
+        - $ref: '#/components/header/Token'
+        - $ref: '#/components/body/QuizQuestionMutateIter3'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/components/return/QuizQuestionNew'
+        401:
+          description: Token is empty or invalid (does not refer to valid logged in user session)
+          schema:
+            $ref: '#/components/return/Error'
+        403:
+          description: Valid token is provided, but user is not an owner of this quiz
+          schema:
+            $ref: '#/components/return/Error'
+        400:
+          description: |
+            If any of the following are true:
+            - Question string is less than 5 characters in length or greater than 50 characters in length
+            - The question has more than 6 answers or less than 2 answers
+            - The question duration is not a positive number
+            - The sum of the question durations in the quiz exceeds 3 minutes
+            - The points awarded for the question are less than 1 or greater than 10
+            - The length of any answer is shorter than 1 character long, or longer than 30 characters long
+            - Any answer strings are duplicates of one another (within the same question)
+            - There are no correct answers
+            - The thumbnailUrl is an empty string
+            - The thumbnailUrl does not end with one of the following filetypes (case insensitive): jpg, jpeg, png
+            - The thumbnailUrl does not begin with 'http://' or 'https://'
+          schema:
+            $ref: '#/components/return/Error'
+      security:
+        - Iteration 3 Token Authentication: []
+  /v1/admin/quiz/{quizid}/question/{questionid}:
+    put:
+      summary: Update quiz question
+      description: |
+        Update the relevant details of a particular question within a quiz.
+        When this route is called, the last edited time is updated, and the colours of all answers of that question are randomly generated.
+      tags:
+        # - "By Topic: Quiz Management"
+        - "Iteration 2 (New)"
+      parameters:
+        - $ref: '#/components/path/QuizId'
+        - $ref: '#/components/path/QuestionId'
+        - $ref: '#/components/body/QuizQuestionMutateIter2'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/components/return/Empty'
+        401:
+          description: Token is empty or invalid (does not refer to valid logged in user session)
+          schema:
+            $ref: '#/components/return/Error'
+        403:
+          description: Valid token is provided, but user is not an owner of this quiz
+          schema:
+            $ref: '#/components/return/Error'
+        400:
+          description: |
+            If any of the following are true:
+            - Question Id does not refer to a valid question within this quiz
+            - Question string is less than 5 characters in length or greater than 50 characters in length
+            - The question has more than 6 answers or less than 2 answers
+            - The question duration is not a positive number
+            - If this question were to be updated, the sum of the question durations in the quiz exceeds 3 minutes
+            - The points awarded for the question are less than 1 or greater than 10
+            - The length of any answer is shorter than 1 character long, or longer than 30 characters long
+            - Any answer strings are duplicates of one another (within the same question)
+            - There are no correct answers
+          schema:
+            $ref: '#/components/return/Error'
+    delete:
+      summary: Delete quiz question
+      description: Delete a particular question from a quiz
+      tags:
+        # - "By Topic: Quiz Management"
+        - "Iteration 2 (New)"
+      parameters:
+        - $ref: '#/components/path/QuizId'
+        - $ref: '#/components/path/QuestionId'
+        - $ref: '#/components/query/Token'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/components/return/Empty'
+        401:
+          description: Token is empty or invalid (does not refer to valid logged in user session)
+          schema:
+            $ref: '#/components/return/Error'
+        403:
+          description: Valid token is provided, but user is not an owner of this quiz
+          schema:
+            $ref: '#/components/return/Error'
+        400:
+          description: |
+            If any of the following are true:
+            - Question Id does not refer to a valid question within this quiz
+          schema:
+            $ref: '#/components/return/Error'
+  /v2/admin/quiz/{quizid}/question/{questionid}:
+    put:
+      summary: Update quiz question
+      description: |
+        Update the relevant details of a particular question within a quiz.
+        When this route is called, the last edited time is updated, and the colours of all answers of that question are randomly generated.
+      tags:
+        # - "By Topic: Quiz Management"
+        - "Iteration 3 (Modified)"
+      parameters:
+        - $ref: '#/components/path/QuizId'
+        - $ref: '#/components/path/QuestionId'
+        - $ref: '#/components/header/Token'
+        - $ref: '#/components/body/QuizQuestionMutateIter3'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/components/return/Empty'
+        401:
+          description: Token is empty or invalid (does not refer to valid logged in user session)
+          schema:
+            $ref: '#/components/return/Error'
+        403:
+          description: Valid token is provided, but user is not an owner of this quiz
+          schema:
+            $ref: '#/components/return/Error'
+        400:
+          description: |
+            If any of the following are true:
+            - Question Id does not refer to a valid question within this quiz
+            - Question string is less than 5 characters in length or greater than 50 characters in length
+            - The question has more than 6 answers or less than 2 answers
+            - The question duration is not a positive number
+            - If this question were to be updated, the sum of the question durations in the quiz exceeds 3 minutes
+            - The points awarded for the question are less than 1 or greater than 10
+            - The length of any answer is shorter than 1 character long, or longer than 30 characters long
+            - Any answer strings are duplicates of one another (within the same question)
+            - There are no correct answers
+            - The thumbnailUrl is an empty string
+            - The thumbnailUrl does not end with one of the following filetypes (case insensitive): jpg, jpeg, png
+            - The thumbnailUrl does not begin with 'http://' or 'https://'
+          schema:
+            $ref: '#/components/return/Error'
+      security:
+        - Iteration 3 Token Authentication: []
+    delete:
+      summary: Delete quiz question
+      description: Delete a particular question from a quiz
+      tags:
+        # - "By Topic: Quiz Management"
+        - "Iteration 3 (Modified)"
+      parameters:
+        - $ref: '#/components/path/QuizId'
+        - $ref: '#/components/path/QuestionId'
+        - $ref: '#/components/header/Token'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/components/return/Empty'
+        401:
+          description: Token is empty or invalid (does not refer to valid logged in user session)
+          schema:
+            $ref: '#/components/return/Error'
+        403:
+          description: Valid token is provided, but user is not an owner of this quiz
+          schema:
+            $ref: '#/components/return/Error'
+        400:
+          description: |
+            If any of the following are true:
+            - Question Id does not refer to a valid question within this quiz
+            - Any session for this quiz is not in END state
+          schema:
+            $ref: '#/components/return/Error'
+      security:
+        - Iteration 3 Token Authentication: []
+  /v1/admin/quiz/{quizid}/question/{questionid}/move:
+    put:
+      summary: Move a quiz question
+      description: | 
+       - Move a question from one particular position in the quiz to another
+       - When this route is called, the timeLastEdited is updated
+      tags:
+        # - "By Topic: Quiz Management"
+        - "Iteration 2 (New)"
+      parameters:
+        - $ref: '#/components/path/QuizId'
+        - $ref: '#/components/path/QuestionId'
+        - $ref: '#/components/body/QuizQuestionMoveIter2'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/components/return/Empty'
+        401:
+          description: Token is empty or invalid (does not refer to valid logged in user session)
+          schema:
+            $ref: '#/components/return/Error'
+        403:
+          description: Valid token is provided, but user is not an owner of this quiz
+          schema:
+            $ref: '#/components/return/Error'
+        400:
+          description: |
+            If any of the following are true:
+            - Question Id does not refer to a valid question within this quiz
+            - NewPosition is less than 0, or NewPosition is greater than n-1 where n is the number of questions
+            - NewPosition is the position of the current question
+          schema:
+            $ref: '#/components/return/Error'
+  /v2/admin/quiz/{quizid}/question/{questionid}/move:
+    put:
+      summary: Move a quiz question
+      description: | 
+       - Move a question from one particular position in the quiz to another
+       - When this route is called, the timeLastEdited is updated
+      tags:
+        # - "By Topic: Quiz Management"
+        - "Iteration 3 (Modified)"
+      parameters:
+        - $ref: '#/components/path/QuizId'
+        - $ref: '#/components/path/QuestionId'
+        - $ref: '#/components/header/Token'
+        - $ref: '#/components/body/QuizQuestionMoveIter3'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/components/return/Empty'
+        401:
+          description: Token is empty or invalid (does not refer to valid logged in user session)
+          schema:
+            $ref: '#/components/return/Error'
+        403:
+          description: Valid token is provided, but user is not an owner of this quiz
+          schema:
+            $ref: '#/components/return/Error'
+        400:
+          description: |
+            If any of the following are true:
+            - Question Id does not refer to a valid question within this quiz
+            - NewPosition is less than 0, or NewPosition is greater than n-1 where n is the number of questions
+            - NewPosition is the position of the current question
+          schema:
+            $ref: '#/components/return/Error'
+      security:
+        - Iteration 3 Token Authentication: []
+  /v1/admin/quiz/{quizid}/question/{questionid}/duplicate:
+    post:
+      summary: Duplicate a quiz question
+      description: | 
+       - A particular question gets duplicated to immediately after where the source question is
+       - When this route is called, the timeLastEdited is updated
+      tags:
+        # - "By Topic: Quiz Management"
+        - "Iteration 2 (New)"
+      parameters:
+        - $ref: '#/components/path/QuizId'
+        - $ref: '#/components/path/QuestionId'
+        - $ref: '#/components/body/Token'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/components/return/QuizQuestionDuplicate'
+        401:
+          description: Token is empty or invalid (does not refer to valid logged in user session)
+          schema:
+            $ref: '#/components/return/Error'
+        403:
+          description: Valid token is provided, but user is not an owner of this quiz
+          schema:
+            $ref: '#/components/return/Error'
+        400:
+          description: |
+            If any of the following are true:
+            - Question Id does not refer to a valid question within this quiz
+          schema:
+            $ref: '#/components/return/Error'
+  /v2/admin/quiz/{quizid}/question/{questionid}/duplicate:
+    post:
+      summary: Duplicate a quiz question
+      description: | 
+       - A particular question gets duplicated to immediately after where the source question is
+       - When this route is called, the timeLastEdited is updated
+      tags:
+        # - "By Topic: Quiz Management"
+        - "Iteration 3 (Modified)"
+      parameters:
+        - $ref: '#/components/path/QuizId'
+        - $ref: '#/components/path/QuestionId'
+        - $ref: '#/components/header/Token'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/components/return/QuizQuestionDuplicate'
+        401:
+          description: Token is empty or invalid (does not refer to valid logged in user session)
+          schema:
+            $ref: '#/components/return/Error'
+        403:
+          description: Valid token is provided, but user is not an owner of this quiz
+          schema:
+            $ref: '#/components/return/Error'
+        400:
+          description: |
+            If any of the following are true:
+            - Question Id does not refer to a valid question within this quiz
+          schema:
+            $ref: '#/components/return/Error'
+      security:
+        - Iteration 3 Token Authentication: []
+        
+
+
+
+
+
+
+  /v1/admin/quiz/{quizid}/sessions:
+    get:
+      summary: View active and inactive quiz sessions
+      description: |
+        Retrieves active and inactive session ids (sorted in ascending order) for a quiz
+        - Active sessions are sessions that are not in the END state.
+        - Inactive sessions are sessions in the END state.
+      tags:
+        # - "By Topic: Quiz Management"
+        - "Iteration 3 (New)"
+      parameters:
+        - $ref: '#/components/header/Token'
+        - $ref: '#/components/path/QuizId'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/components/return/QuizSessionsList'
+        401:
+          description: Token is empty or invalid (does not refer to valid logged in user session)
+          schema:
+            $ref: '#/components/return/Error'
+        403:
+          description: Valid token is provided, but user is not an owner of this quiz
+          schema:
+            $ref: '#/components/return/Error'
+      security:
+        - Iteration 3 Token Authentication: []
+      
+  /v1/admin/quiz/{quizid}/session/start:
+    post:
+      summary: Start a new session for a quiz
+      description: This _copies_ the quiz, so that any edits whilst a session is running does not affect active session
+      tags:
+        # - "By Topic: Session Management"
+        - "Iteration 3 (New)"
+      parameters:
+        - $ref: '#/components/path/QuizId'
+        - $ref: '#/components/header/Token'
+        - $ref: '#/components/body/QuizSessionStartIter3'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/components/return/QuizSessionStart'
+        401:
+          description: Token is empty or invalid (does not refer to valid logged in user session)
+          schema:
+            $ref: '#/components/return/Error'
+        403:
+          description: Valid token is provided, but user is not an owner of this quiz
+          schema:
+            $ref: '#/components/return/Error'
+        400:
+          description: |
+            If any of the following are true:
+            - autoStartNum is a number greater than 50
+            - A maximum of 10 sessions that are not in END state currently exist for this quiz
+            - The quiz does not have any questions in it
+            - The quiz is in trash
+          schema:
+            $ref: '#/components/return/Error'
+      security:
+        - Iteration 3 Token Authentication: []
+  /v1/admin/quiz/{quizid}/session/{sessionid}:
+    put:
+      summary: Update a quiz session state
+      description: Update the state of a particular quiz session by sending an action command
+      tags:
+        # - "By Topic: Session Management"
+        - "Iteration 3 (New)"
+      parameters:
+        - $ref: '#/components/path/QuizId'
+        - $ref: '#/components/path/SessionId'
+        - $ref: '#/components/header/Token'
+        - $ref: '#/components/body/QuizSessionMutateIter3'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/components/return/Empty'
+        401:
+          description: Token is empty or invalid (does not refer to valid logged in user session)
+          schema:
+            $ref: '#/components/return/Error'
+        403:
+          description: Valid token is provided, but user is not an owner of this quiz
+          schema:
+            $ref: '#/components/return/Error'
+        400:
+          description: |
+            If any of the following are true:
+            - Session Id does not refer to a valid session within this quiz
+            - Action provided is not a valid Action enum
+            - Action enum cannot be applied in the current state (see spec for details)
+          schema:
+            $ref: '#/components/return/Error'
+      security:
+        - Iteration 3 Token Authentication: []
+    get:
+      summary: Get quiz session status
+      description: Get the status of a particular quiz session
+      tags:
+        # - "By Topic: Session Management"
+        - "Iteration 3 (New)"
+      parameters:
+        - $ref: '#/components/path/QuizId'
+        - $ref: '#/components/path/SessionId'
+        - $ref: '#/components/header/Token'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/components/return/QuizSessionStatus'
+        401:
+          description: Token is empty or invalid (does not refer to valid logged in user session)
+          schema:
+            $ref: '#/components/return/Error'
+        403:
+          description: Valid token is provided, but user is not an owner of this quiz
+          schema:
+            $ref: '#/components/return/Error'
+        400:
+          description: |
+            If any of the following are true:
+            - Session Id does not refer to a valid session within this quiz
+          schema:
+            $ref: '#/components/return/Error'
+      security:
+        - Iteration 3 Token Authentication: []
+      
+  /v1/admin/quiz/{quizid}/session/{sessionid}/results:
+    get:
+      summary: Get quiz session final results
+      description: Get the final results for all players for a completed quiz session
+      tags:
+        # - "By Topic: Session Management"
+        - "Iteration 3 (New)"
+      parameters:
+        - $ref: '#/components/path/QuizId'
+        - $ref: '#/components/path/SessionId'
+        - $ref: '#/components/header/Token'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/components/return/ResultsFinal'
+        401:
+          description: Token is empty or invalid (does not refer to valid logged in user session)
+          schema:
+            $ref: '#/components/return/Error'
+        403:
+          description: Valid token is provided, but user is not an owner of this quiz
+          schema:
+            $ref: '#/components/return/Error'
+        400:
+          description: |
+            If any of the following are true:
+            - Session Id does not refer to a valid session within this quiz
+            - Session is not in FINAL_RESULTS state
+          schema:
+            $ref: '#/components/return/Error'
+      security:
+        - Iteration 3 Token Authentication: []
+  /v1/admin/quiz/{quizid}/session/{sessionid}/results/csv:
+    get:
+      summary: Get quiz session final results in CSV format
+      description: Get the a link to the final results (in CSV format) for all players for a completed quiz session
+      tags:
+        # - "By Topic: Session Management"
+        - "Iteration 3 (New)"
+      parameters:
+        - $ref: '#/components/path/QuizId'
+        - $ref: '#/components/path/SessionId'
+        - $ref: '#/components/header/Token'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/components/return/QuizSessionResultsCsv'
+        401:
+          description: Token is empty or invalid (does not refer to valid logged in user session)
+          schema:
+            $ref: '#/components/return/Error'
+        403:
+          description: Valid token is provided, but user is not an owner of this quiz
+          schema:
+            $ref: '#/components/return/Error'
+        400:
+          description: |
+            If any of the following are true:
+            - Session Id does not refer to a valid session within this quiz
+            - Session is not in FINAL_RESULTS state
+          schema:
+            $ref: '#/components/return/Error'
+      security:
+        - Iteration 3 Token Authentication: []
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  /v1/player/join:
+    post:
+      summary: Allow a guest player to join a session
+      description: |
+        If the name entered is an empty string, a name must be randomly generated that conforms to the structure "[5 letters][3 numbers]" (e.g. valid123, ifjru483, ofijr938) where there are no repetitions of numbers or characters within the same name
+      tags:
+        - "Iteration 3 (New)"
+        # - "By Topic: Playing a session"
+      parameters:
+        - $ref: '#/components/body/PlayerJoin'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/components/return/PlayerJoin'
+        400:
+          description: |
+            If any of the following are true:
+            - Name of user entered is not unique (compared to other users who have already joined)
+            - Session Id does not refer to a valid session
+            - Session is not in LOBBY state
+          schema:
+            $ref: '#/components/return/Error'
+  /v1/player/{playerid}:
+    get:
+      summary: Status of guest player in session
+      description: Get the status of a guest player that has already joined a session
+      tags:
+        # - "By Topic: Playing a session"
+        - "Iteration 3 (New)"
+      parameters:
+        - $ref: '#/components/path/PlayerId'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/components/return/PlayerStatus'
+        400:
+          description: |
+            If any of the following are true:
+            - If player ID does not exist
+          schema:
+            $ref: '#/components/return/Error'
+  /v1/player/{playerid}/question/{questionposition}:
+    get:
+      summary: Current question information for a player
+      description: Get the information about a question that the guest player is on. Question position starts at 1
+      tags:
+        # - "By Topic: Playing a session"
+        - "Iteration 3 (New)"
+      parameters:
+        - $ref: '#/components/path/PlayerId'
+        - $ref: '#/components/path/QuestionPosition'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/components/group/QuizQuestionPublic'
+        400:
+          description: |
+            If any of the following are true:
+            - If player ID does not exist
+            - If question position is not valid for the session this player is in
+            - If session is not currently on this question
+            - Session is in LOBBY, QUESTION_COUNTDOWN, or END state
+          schema:
+            $ref: '#/components/return/Error'
+  /v1/player/{playerid}/question/{questionposition}/answer:
+    put:
+      summary: Player submission of answers(s)
+      description: |
+        Allow the current player to submit answer(s) to the currently active question. Question position starts at 1
+        Note: An answer can be re-submitted once first selection is made, as long as game is in the right state
+      tags:
+        # - "By Topic: Playing a session"
+        - "Iteration 3 (New)"
+      parameters:
+        - $ref: '#/components/body/PlayerQuestionAnswer'
+        - $ref: '#/components/path/PlayerId'
+        - $ref: '#/components/path/QuestionPosition'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/components/return/Empty'
+        400:
+          description: |
+            If any of the following are true:
+            - If player ID does not exist
+            - If question position is not valid for the session this player is in
+            - Session is not in QUESTION_OPEN state
+            - If session is not yet up to this question
+            - Answer IDs are not valid for this particular question
+            - There are duplicate answer IDs provided
+            - Less than 1 answer ID was submitted
+          schema:
+            $ref: '#/components/return/Error'
+  /v1/player/{playerid}/question/{questionposition}/results:
+    get:
+      summary: Results for a question
+      description: Get the results for a particular question of the session a player is playing in. Question position starts at 1
+      tags:
+        # - "By Topic: Playing a session"
+        - "Iteration 3 (New)"
+      parameters:
+        - $ref: '#/components/path/PlayerId'
+        - $ref: '#/components/path/QuestionPosition'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/components/group/QuestionResults'
+        400:
+          description: |
+            If any of the following are true:
+            - If player ID does not exist
+            - If question position is not valid for the session this player is in
+            - Session is not in ANSWER_SHOW state
+            - If session is not yet up to this question
+          schema:
+            $ref: '#/components/return/Error'
+  /v1/player/{playerid}/results:
+    get:
+      summary: Final results for a session
+      description: Get the final results for a whole session a player is playing in
+      tags:
+        # - "By Topic: Playing a session"
+        - "Iteration 3 (New)"
+      parameters:
+        - $ref: '#/components/path/PlayerId'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/components/return/ResultsFinal'
+        400:
+          description: |
+            If any of the following are true:
+            - If player ID does not exist
+            - Session is not in FINAL_RESULTS state
+          schema:
+            $ref: '#/components/return/Error'
+  /v1/player/{playerid}/chat:
+    get:
+      summary: All chat messages in session
+      description: |
+        Return all messages that are in the same session as the player, in the order they were sent
+        In the repsonse, the timeSent is a unix timestamp that was recorded when the message was sent. You can find more information that here: https://en.wikipedia.org/wiki/Unix_time. When testing this, it's hard to get it accurate because network delays mean there is some variability in when the server will "lodge" the request. To solve this, when testing simply check if the received message falls within a 1 second range of what you'd expect.
+      tags:
+        # - "By Topic: Playing a session"
+        - "Iteration 3 (New)"
+      parameters:
+        - $ref: '#/components/path/PlayerId'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/components/return/PlayerChat'
+        400:
+          description: |
+            If any of the following are true:
+            - If player ID does not exist
+    post:
+      summary: Send chat message in session
+      description: Send a new chat message to everyone in the session
+      tags:
+        # - "By Topic: Playing a session"
+        - "Iteration 3 (New)"
+      parameters:
+        - $ref: '#/components/path/PlayerId'
+        - $ref: '#/components/body/PlayerQuestionChat'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/components/return/Empty'
+        400:
+          description: |
+            If any of the following are true:
+            - If player ID does not exist
+            - If message body is less than 1 character or more than 100 characters
+          schema:
+            $ref: '#/components/return/Error'
+      
+
+
+  /v1/clear:
+    delete:
+      summary: Reset the state of the application back to the start.
+      description: Wipe all details (users, quizzes) back to the beggining as if the data structure is fresh.
+      tags:
+        # - "By Topic: Other"
+        - "Iteration 2 (Using Iteration 1)"
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/components/return/Empty'
+
+securityDefinitions:
+  Iteration 3 Token Authentication:
+    type: apiKey
+    name: token
+    in: header
