@@ -42,7 +42,7 @@ The **backend server** is responsible for handling client requests, processing d
 
 ### **1️⃣ Clone the Repository**  
 ```sh
-git clone https://github.com/your-username/toohakQuizApplication.git
+git clone https://github.com/arygupta04/toohakQuizApplication.git
 cd toohakQuizApplication
 ```
 
@@ -50,24 +50,17 @@ cd toohakQuizApplication
 ```sh
 npm install
 ```
-
-### **3️⃣ Compile TypeScript Code**  
-```sh
-npm run build
-```
-This converts TypeScript (`.ts` files) into JavaScript (`.js` files).  
-
-### **4️⃣ Start the Backend Server**  
+### **3️⃣ Start the Backend Server**  
 ```sh
 npm start
 ```
-By default, the server runs on **`http://localhost:5000`**.  
+By default, the server runs on **`http://localhost:3000`**.  
 
 ---
 
 ## 🔗 **Connecting Backend with the Frontend**  
 1. Use the **university-provided frontend code**.  
-2. Ensure the frontend’s API calls are directed to **`http://localhost:5000`**.  
+2. Ensure the frontend’s API calls are directed to **`http://localhost:3000`**.  
 3. Start the frontend:  
    ```sh
    cd toohak-frontend
