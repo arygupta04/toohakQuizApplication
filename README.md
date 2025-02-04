@@ -59,15 +59,10 @@ By default, the server runs on **`http://localhost:3000`**.
 ---
 
 ## 🔗 **Connecting Backend with the Frontend**  
-1. Use the **university-provided frontend code**.  
-2. Ensure the frontend’s API calls are directed to **`http://localhost:3000`**.  
-3. Start the frontend:  
-   ```sh
-   cd toohak-frontend
-   npm install
-   npm start
-   ```
-4. Open **`http://localhost:3000`** in your browser to access Toohak.  
+1. Run your backend on port 49153  
+2. Clone this repo and cd into the new folder  
+3. Run `npx http-server -p 3000`  
+4. Open a browser on `http://localhost:3000`  
 
 ---
 
@@ -114,6 +109,3 @@ npm run test:coverage
 This generates a report showing which parts of the backend code are covered by tests.  
 
 ---
-
-## 📜 **License**  
-This project is licensed under the **MIT License**.  
